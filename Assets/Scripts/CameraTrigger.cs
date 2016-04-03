@@ -5,32 +5,44 @@ public class CameraTrigger : MonoBehaviour
 {
     public CameraSwitcher cameraSwitcher;
     public Camera triggeredCamera;
-    public float duration = 1f;
+
+    private Collider car;
 
     void Start()
     {
         triggeredCamera.gameObject.SetActive(false);
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider collider)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Car"))
+        if (collider.gameObject.layer == LayerMask.NameToLayer("Car"))
         {
-            StartCoroutine(TriggerCameraForSeconds(duration));
+            SwitchToTriggeredCamera(true);
+            car = collider;
         }
     }
 
-    IEnumerator TriggerCameraForSeconds(float duration)
+    void OnTriggerExit(Collider collider)
     {
-        cameraSwitcher.enabled = false;
-        cameraSwitcher.DeactivateAllCameras();
-        triggeredCamera.gameObject.SetActive(true);
-
-        yield return new WaitForSeconds(duration);
-
-        triggeredCamera.gameObject.SetActive(false);
-        cameraSwitcher.ReactivateCurrentCamera();
-        cameraSwitcher.enabled = true;
+        if (collider == car)
+        {
+            SwitchToTriggeredCamera(false);
+            car = null;
+        }
     }
 
+    void SwitchToTriggeredCamera(bool triggerEntered)
+    {
+        if (triggerEntered)
+        {
+            cameraSwitcher.DeactivateAllCameras();
+        }
+        else
+        {
+            cameraSwitcher.ReactivateCurrentCamera();
+        }
+
+        cameraSwitcher.enabled = !triggerEntered;
+        triggeredCamera.gameObject.SetActive(triggerEntered);
+    }
 }
