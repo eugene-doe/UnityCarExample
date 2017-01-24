@@ -7,5 +7,3 @@ Current features:
 * Rear view mirror
 * Camera switching (press C)
 * Automatic switching to the side view camera when the car enters the ramp
- 
-More features to be added later. Feel free to fork, collaborators welcome!
